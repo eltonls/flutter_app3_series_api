@@ -1,22 +1,56 @@
+import 'package:app3_series_api/tv_show_service.dart';
 import 'package:flutter/material.dart';
 
 class TvShow {
+  int id;
   String title;
-  String stream;
-  int rating;
+  String webChannel;
+  double rating;
   String summary;
+  String image;
 
   TvShow({
+    required this.id,
     required this.title,
-    required this.stream,
+    required this.webChannel,
     required this.rating,
     required this.summary,
+    required this.image
   });
+
+  factory TvShow.fromJson(Map<String, dynamic> json) {
+      return TvShow(
+        id: json["id"],
+        image: json["image"]?["medium"]?? "",
+        title: json["name"],
+        webChannel: json["webChannel"]?["name"] ?? "N/A",
+        rating: json["rating"]?["average"]?.toDouble() ?? 0.0,
+        summary: json["summary"] ?? "summary_not_found"
+      );
+  }
 }
 
 class TvShowModel extends ChangeNotifier {
+  final TvShowService tvShowService = TvShowService();
+
   final List<TvShow> _tvShows = [];
   List<TvShow> get tvShows => _tvShows;
+
+  Future<List<TvShow>> fetchTvShows(String query) {
+    try {
+      return tvShowService.fetchTvShows(query);
+    } catch(err) {
+      throw Exception(err);
+    }
+  }
+
+  Future<TvShow> fetchTvShowById(int id) {
+    try {
+      return tvShowService.fetchTvShowById(id);
+    } catch(err) {
+      throw Exception(err);
+    }
+  }
 
   void addTvShow(TvShow tvShow, BuildContext context) {
     tvShows.add(tvShow);

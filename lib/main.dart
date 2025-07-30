@@ -20,6 +20,7 @@ void main() {
 }
 
 final GoRouter _router = GoRouter(
+  initialLocation: '/search',
   routes: [
     ShellRoute(
       builder: (context, state, child) => BaseScreen(child: child),
@@ -29,6 +30,7 @@ final GoRouter _router = GoRouter(
           path: '/search',
           builder: (context, state) => TvShowSearchScreen(),
         ),
+        GoRoute(path: "/tvShows/detail", builder: (context, state) => TvShowScreen()),
       ],
     ),
   ],
