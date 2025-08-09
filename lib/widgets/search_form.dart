@@ -29,7 +29,7 @@ class _SearchFormState extends State<SearchForm> {
   void handleSubmitSearch(String value) {
     if (_formKey.currentState!.validate()) {
       final tvShowModel = context.read<TvShowModel>();
-      var shows = tvShowModel.fetchTvShows(value);
+      var shows = tvShowModel.searchTvShows(value);
       widget.onSearched(shows);
     }
   }

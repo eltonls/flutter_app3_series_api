@@ -2,30 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MyThemeModel extends ChangeNotifier {
+  bool _isDark = false;
+  late MyTheme _myTheme;
 
-  bool isDark = false;
-  MyTheme myTheme = MyTheme(color: Color(0xff8716d5));
-  ThemeData get customTheme => myTheme.customTheme;
-  ThemeData get customThemeDark => myTheme.customThemeDark;
-  ThemeMode get themeMode => isDark ? ThemeMode.dark : ThemeMode.light;
+  MyThemeModel() {
+    _myTheme = MyTheme(color: const Color(0xff8716d5));
+  }
 
-  void toogleTheme() {
-    isDark = !isDark;
+  bool get isDark => _isDark;
+  ThemeData get customTheme => _myTheme.customTheme;
+  ThemeData get customThemeDark => _myTheme.customThemeDark;
+  ThemeMode get themeMode => _isDark ? ThemeMode.dark : ThemeMode.light;
+
+  void toggleTheme() {
+    _isDark = !_isDark;
+    notifyListeners();
+  }
+
+  void updateThemeColor(Color newColor) {
+    _myTheme = MyTheme(color: newColor);
     notifyListeners();
   }
 }
 
 class MyTheme {
-  // Default color value
-  Color color;
+  final Color color;
 
-  // Uso de late para inicializar as propriedades posteriormente
-  late ColorScheme colorScheme;
-  late ColorScheme colorSchemeDark;
-  late ThemeData customTheme;
-  late ThemeData customThemeDark;
+  late final ColorScheme colorScheme;
+  late final ColorScheme colorSchemeDark;
+  late final ThemeData customTheme;
+  late final ThemeData customThemeDark;
 
   MyTheme({required this.color}) {
+    _initializeThemes();
+  }
+
+  void _initializeThemes() {
     colorScheme = ColorScheme.fromSeed(
       seedColor: color,
       brightness: Brightness.light,
@@ -36,7 +48,12 @@ class MyTheme {
       brightness: Brightness.dark,
     );
 
-    customTheme = ThemeData(
+    customTheme = _buildLightTheme();
+    customThemeDark = _buildDarkTheme();
+  }
+
+  ThemeData _buildLightTheme() {
+    return ThemeData(
       colorScheme: colorScheme,
       fontFamily: GoogleFonts.lato().fontFamily,
       appBarTheme: AppBarTheme(
@@ -57,25 +74,29 @@ class MyTheme {
         color: colorScheme.secondaryContainer,
         shadowColor: colorScheme.onSurface,
         elevation: 5,
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
       ),
     );
+  }
 
-    customThemeDark = ThemeData(
+  ThemeData _buildDarkTheme() {
+    return ThemeData(
       colorScheme: colorSchemeDark,
       fontFamily: GoogleFonts.lato().fontFamily,
       appBarTheme: AppBarTheme(
         centerTitle: true,
         toolbarHeight: 100,
-        backgroundColor: colorSchemeDark.onPrimary,
+        backgroundColor: colorSchemeDark.surface,
         titleTextStyle: GoogleFonts.lobster(
           fontSize: 36,
           fontWeight: FontWeight.bold,
-          color: colorSchemeDark.primary,
+          color: colorSchemeDark.onSurface,
         ),
         iconTheme: IconThemeData(
-          color: colorScheme.onPrimary,
+          color: colorSchemeDark.onSurface,
           size: 36,
         ),
       ),
@@ -83,8 +104,10 @@ class MyTheme {
         color: colorSchemeDark.secondaryContainer,
         shadowColor: colorSchemeDark.onSurface,
         elevation: 5,
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
       ),
     );
   }
